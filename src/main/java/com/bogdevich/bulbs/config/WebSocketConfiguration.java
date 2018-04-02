@@ -13,7 +13,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
-                .addEndpoint("/socket")
+                .addEndpoint("/bulbs-message")
                 .setAllowedOrigins("*")
                 .withSockJS();
     }
@@ -21,7 +21,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry
-                .setApplicationDestinationPrefixes("/app")
-                .enableSimpleBroker("/topic");
+                .setApplicationDestinationPrefixes("/bulbs")
+                .enableSimpleBroker("/topic", "/queue");
     }
 }
