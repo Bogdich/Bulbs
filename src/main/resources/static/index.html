@@ -28,26 +28,26 @@
             </header>
 
             <main role="main" class="inner cover">
-                <div class="container-fluid">
-                    <div class="row" data-bind="foreach: bulbsList">
-                        <div class="col col-4" >
+                <div id="home-container" class="container-fluid">
+                    <div id="room-container" class="row" data-bind="foreach: bulbsList">
+<!--                        <div class="col col-4" >
                             <div class="card bg-info">
                                 <img class="card-img-top" src="svg/ic_lightbulb_outline_white_48px.svg">
                                 <div class="card-body align-content-center">
                                     <button type="button" class="btn btn-success">Here we go!</button>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
-                <div class="container h-100">
+                <div id="subscription-container" class="container h-100" hidden>
                     <div class="row align-items-center h-100">
                         <div class="col-6 mx-auto">
-                            <div class="card bg-info">
+                            <div id="subscription-card" class="card bg-info">
                                 <img class="card-img-top" src="svg/ic_lightbulb_outline_white_48px.svg">
                                 <div class="card-body align-content-center">
-                                    <button type="button" class="btn btn-lg btn-danger">Go back</button>
-                                    <button type="button" class="btn btn-lg btn-success">PUSH</button>
+                                    <button id="disconnect" type="button" class="btn btn-lg btn-danger">Go back</button>
+                                    <button id="send-message" data-id="" type="button" class="btn btn-lg btn-success">PUSH</button>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,16 @@
         </div>
     </div>
 
-    <script type="text/javascript" data-main="js/bulb.js" src="js/require.js"></script>
+<!--    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script type="text/javascript" src="js/bulb.js"></script>
 
 </body>
 </html>

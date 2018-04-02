@@ -17,6 +17,10 @@ public class Bulb {
     public Bulb() {
     }
 
+    public Bulb(boolean active) {
+        this.active = active;
+    }
+
     public Long getId() {
         return id;
     }

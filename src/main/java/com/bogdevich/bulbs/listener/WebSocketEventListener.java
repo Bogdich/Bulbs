@@ -13,7 +13,6 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Optional;
 
-@Component
 public class WebSocketEventListener {
 
     private static final Logger LOGGER =
@@ -21,18 +20,22 @@ public class WebSocketEventListener {
 
     private static final String USERNAME_ARG = "username";
 
+/*
     private final SimpMessageSendingOperations sendingOperations;
 
     @Autowired
     public WebSocketEventListener(SimpMessageSendingOperations sendingOperations) {
         this.sendingOperations = sendingOperations;
     }
+*/
 
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
         LOGGER.info("Received a new web socket connection.");
     }
 
     public void handleWebSocketDissconnectListener(SessionDisconnectEvent event) {
+        LOGGER.info("Connection is finished.");
+/*
         StompHeaderAccessor headerAccessor =
                 StompHeaderAccessor.wrap(event.getMessage());
         Optional
@@ -44,6 +47,6 @@ public class WebSocketEventListener {
                     message.setSender((String) username);
                     sendingOperations.convertAndSend("topic/public", message);
                 });
-
+*/
     }
 }
