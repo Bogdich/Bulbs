@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
+    <title>Bulbs</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <style>
+        html, body {
+            height:100%;
+        }
+    </style>
+</head>
+
+<body class="text-white bg-dark">
+    <div class="text-center">
+        <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+            <header class="masthead mb-auto">
+                <h1 class="cover-heading">Turn the light on.</h1>
+                <p class="lead">
+                    Revolutionary, front line standing.
+                    Solitary mind state, kind of scary.
+                    Take a deep breath.
+                    And put me on the front line...</p>
+                <p class="lead"></p>
+            </header>
+
+            <main role="main" class="inner cover">
+                <div class="container-fluid">
+                    <div class="row" data-bind="foreach: bulbsList">
+                        <div class="col col-4" >
+                            <div class="card bg-info">
+                                <img class="card-img-top" src="svg/ic_lightbulb_outline_white_48px.svg">
+                                <div class="card-body align-content-center">
+                                    <button type="button" class="btn btn-success">Here we go!</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container h-100">
+                    <div class="row align-items-center h-100">
+                        <div class="col-6 mx-auto">
+                            <div class="card bg-info">
+                                <img class="card-img-top" src="svg/ic_lightbulb_outline_white_48px.svg">
+                                <div class="card-body align-content-center">
+                                    <button type="button" class="btn btn-lg btn-danger">Go back</button>
+                                    <button type="button" class="btn btn-lg btn-success">PUSH</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="mastfoot mt-auto">
+                <div class="inner">
+                    <p class="lead"></p>
+                    <p class="lead">Eugene Bogdevich. 2018.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script type="text/javascript" data-main="js/bulb.js" src="js/require.js"></script>
+
+</body>
+</html>
