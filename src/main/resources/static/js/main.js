@@ -1,118 +1,111 @@
 'use strict';
 
-var usernamePage = document.querySelector('#username-page');
-var chatPage = document.querySelector('#chat-page');
-var usernameForm = document.querySelector('#usernameForm');
-var messageForm = document.querySelector('#messageForm');
-var messageInput = document.querySelector('#message');
-var messageArea = document.querySelector('#messageArea');
-var connectingElement = document.querySelector('.connecting');
+const homeContainer = document.querySelector('#home-container');
+const roomContainer = document.querySelector('#room-container');
+const subscriptionContainer = document.querySelector('#subscription-container');
+const subscriptionCard = document.querySelector('#subscription-card');
+const disconnectButton = document.querySelector('#disconnect');
+const sendButton = document.querySelector('#send-message');
 
-var stompClient = null;
-var username = null;
+const sockJsUrl = '/bulbs-message';
+const changeStateUrl = '/bulbs-broker/';
+const bulbsTopic = '/topic/';
 
-var colors = [
-    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
-    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
-];
+let stompClient = null;
+let subscription = null;
 
-function connect(event) {
-    username = document.querySelector('#name').value.trim();
+let subscriptionId = null;
 
-    if(username) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
 
-        var socket = new SockJS('/socket');
-        stompClient = Stomp.over(socket);
+let roomItemDom = function(id) {
+    return "" +
+        "<div id=\"room-" + id + "\" class=\"col col-4 col-sm-4\" >" +
+        "   <div class=\"card bg-info\">" +
+        "       <img class=\"card-img-top\" src=\"svg/ic_lightbulb_outline_white_48px.svg\">" +
+        "       <div class=\"card-body align-content-center\">" +
+        "           <button id=\"" + id + "\" type=\"button\" class=\"btn btn-success\">Here we go!</button>" +
+        "       </div>" +
+        "   </div>" +
+        "</div>"
+};
 
-        stompClient.connect({}, onConnected, onError);
-    }
-    event.preventDefault();
+let getRooms = function() {
+    fetch('/bulbs')
+        .then((resp) => resp.json())
+        .then(function(roomList) {
+            roomList.forEach(function (item) {
+                roomContainer.insertAdjacentHTML('beforeend', roomItemDom(item.id));
+                let button = document.getElementById(item.id);
+                button.onclick = onSubscribe;
+            })
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+    connect();
+};
+
+function connect() {
+    let socket = new SockJS('/message');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, onConnected, onError);
 }
-
 
 function onConnected() {
-    // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/public', onMessageReceived);
-
-    // Tell your username to the server
-    stompClient.send("/app/chat.addUser",
-        {},
-        JSON.stringify({sender: username, type: 'JOIN'})
-    )
-
-    connectingElement.classList.add('hidden');
+    console.log('Succeed')
 }
-
 
 function onError(error) {
-    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
-    connectingElement.style.color = 'red';
+    console.log(error);
 }
 
+function onSubscribe(event) {
+    console.log('Subscription event: ');
+    console.log(event);
+    subscriptionId = event.target.id;
+    subscription = stompClient.subscribe('/topic/' + subscriptionId, onMessageReceived);
+
+
+    homeContainer.hidden = true;
+    subscriptionContainer.hidden = false;
+    event.preventDefault();
+}
+
+function onMessageReceived(payload) {
+    console.log('Received message: ');
+    console.log(payload);
+    let bulb = JSON.parse(payload.body);
+    subscriptionCard.classList.toggle('bg-info', !bulb.active);
+    subscriptionCard.classList.toggle('bg-warning', bulb.active);
+}
 
 function sendMessage(event) {
-    var messageContent = messageInput.value.trim();
-    if(messageContent && stompClient) {
-        var chatMessage = {
-            sender: username,
-            content: messageInput.value,
-            type: 'CHAT'
+    console.log('Send message event: ');
+    console.log(event);
+    let buttonId = subscriptionId;//event.explicitOriginalTarget.attributes;
+    let newState = !(subscriptionCard.classList.contains('bg-warning'));
+    if (buttonId && stompClient) {
+        let chatMessage = {
+            id: buttonId,
+            active: newState
         };
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
-        messageInput.value = '';
+        stompClient.send('/app/' + buttonId, {}, JSON.stringify(chatMessage));
     }
     event.preventDefault();
 }
 
-
-function onMessageReceived(payload) {
-    var message = JSON.parse(payload.body);
-
-    var messageElement = document.createElement('li');
-
-    if(message.type === 'JOIN') {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' joined!';
-    } else if (message.type === 'LEAVE') {
-        messageElement.classList.add('event-message');
-        message.content = message.sender + ' left!';
-    } else {
-        messageElement.classList.add('chat-message');
-
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
-
-        messageElement.appendChild(avatarElement);
-
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
-    }
-
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.content);
-    textElement.appendChild(messageText);
-
-    messageElement.appendChild(textElement);
-
-    messageArea.appendChild(messageElement);
-    messageArea.scrollTop = messageArea.scrollHeight;
+function disconnect(event) {
+    console.log('Unsubscribe button event: ');
+    console.log(event);
+    subscription.unsubscribe();
+    subscriptionId = null;
+    homeContainer.hidden = false;
+    subscriptionContainer.hidden = true;
+    subscriptionCard.classList.toggle('bg-info', false);
+    subscriptionCard.classList.toggle('bg-warning', false);
+    event.preventDefault();
 }
 
-
-function getAvatarColor(messageSender) {
-    var hash = 0;
-    for (var i = 0; i < messageSender.length; i++) {
-        hash = 31 * hash + messageSender.charCodeAt(i);
-    }
-    var index = Math.abs(hash % colors.length);
-    return colors[index];
-}
-
-usernameForm.addEventListener('submit', connect, true);
-messageForm.addEventListener('submit', sendMessage, true);
+document.addEventListener('DOMContentLoaded', getRooms);
+sendButton.onclick = sendMessage;
+disconnectButton.onclick = disconnect;
